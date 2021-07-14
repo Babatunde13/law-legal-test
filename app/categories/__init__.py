@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-cateories_bp = Blueprint('categories', __name__)
+categories_bp = Blueprint('categories', __name__)
 
 from . import views
