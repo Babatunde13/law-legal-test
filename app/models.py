@@ -12,8 +12,8 @@ class User(db.Model):
     is_confirmed=db.Column(db.Boolean, default=False)
     is_admin=db.Column(db.Boolean, default=False)
     payment=db.Column(db.Boolean, default=False)
-    created_at=db.Column(db.DateTime, default=datetime.now)
-    updated_at=db.Column(db.DateTime, default=datetime.now)
+    created_at=db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at=db.Column(db.DateTime, default=datetime.utcnow)
     categories=db.relationship('Categories', backref='users', lazy='dynamic')
     products=db.relationship('Products', backref='users', lazy='dynamic')
     transactions=db.relationship('Transactions', backref='users', lazy='dynamic')
@@ -49,9 +49,16 @@ class User(db.Model):
             'is_confirmed': self.is_confirmed, 'is_admin': self.is_admin,
         }
 
+products_categories = db.Table(
+    'products_categories',
+    db.Column('product_id', db.Integer, db.ForeignKey('product.id')),
+    db.Column('category_id', db.Integer, db.ForeignKey('category.id'))
+)
+
 class Categories(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
     name = db.Column(db.String(30), index=True)
+    
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
@@ -59,22 +66,29 @@ class Categories(db.Model):
     
     def to_dict(self):
         return {
-            'name': self.name, 'email': self.email, '_id': self.id,
-            'is_confirmed': self.is_confirmed, 'is_admin': self.is_admin,
+            'name': self.name, 'products': self.self.products, '_id': self.id,
+            'creator': self.user
         }
 
 class Products(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
     name = db.Column(db.String(30), index=True)
+    quantity = db.Column(db.Integer, default=1)
+    products = db.relationship(
+        'Categories',
+        secondary=products_categories,
+        backref=db.backref('products_categories', lazy='dynamic'),
+        lazy='dynamic'
+    )
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
-        return f"User('{self.email}')"
+        return f"User('{self.name}')"
     
     def to_dict(self):
         return {
-            'name': self.name, 'email': self.email, '_id': self.id,
-            'is_confirmed': self.is_confirmed, 'is_admin': self.is_admin,
+            'name': self.name, 'quantity': self.quantity, '_id': self.id,
+            'categories': self.categories, 'creeator': self.user
         }
 
 class Transactions(db.Model):
@@ -90,7 +104,7 @@ class Transactions(db.Model):
     
     def to_dict(self):
         return {
-            'name': self.name, 'email': self.email, '_id': self.id,
-            'is_confirmed': self.is_confirmed, 'is_admin': self.is_admin,
+            'name': self.name, 'description': self.description, '_id': self.id,
+            'user': self.user, 'product': self.product
         }
     
