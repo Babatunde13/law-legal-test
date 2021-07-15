@@ -1,3 +1,5 @@
+from app.utils.validate_input.create_products import validate_product
+from flask import request
 from app.models import Products
 from app.users import token_required, admin_required
 from app import db
@@ -8,6 +10,11 @@ from app.utils.response_format import ResponseFormat
 @token_required
 @admin_required
 def create_products(current_user):
+    data = request.get_json()
+    # validate input
+    if validate_product(data):
+        return validate_product(data)
+    # create product
     return ResponseFormat(
         "Successfully create products",
         {},
