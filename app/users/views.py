@@ -1,11 +1,12 @@
 from app.models import User
 from app.utils.validate_input.signup import validate_sign_up_data
-from flask import request
+from app.utils.validate_input.signin import validate_sign_in_data
+from flask import request, current_app as app
 from app.utils.response_format import ResponseFormat
 from . import users_bp
 from app.utils import validate
 from app.utils.db_utils import auth
-from app import db
+import jwt
 
 @users_bp.route('/auth/signup', methods=['POST'])
 def signup():
@@ -24,12 +25,10 @@ def signup():
                 "ok"
             ).toObject(), 400
         new_user = auth.signup(
-            data['email'], 
+            data['name'], 
             data['email'], 
             data['password']
         )
-        db.session.add(new_user)
-        db.session.commit()
         print(new_user)
         if new_user:
             return ResponseFormat(
@@ -43,6 +42,7 @@ def signup():
                 "ok"
             ).toObject()
     except Exception as e:
+        print(e)
         return ResponseFormat(
                 "Something went wrong!",
                 None,
@@ -51,11 +51,46 @@ def signup():
 
 @users_bp.route('/auth/login', methods=['POST'])
 def login():
-    return ResponseFormat(
-        "Successfully fetched auth token",
-        {},
-        "ok"
-    ).toObject()
+    try:
+        data = request.get_json()
+        print(data)
+        # validate input
+        if validate_sign_in_data(data):
+            return validate_sign_in_data(data)
+
+        user = auth.signin(
+            data['email'], 
+            data['password']
+        )
+        if user:
+            try:
+                print(user)
+                user['token'] = jwt.encode(
+                    {'user_id': str(user['_id'])},
+                    app.config['SECRET_KEY']
+                )
+                return ResponseFormat(
+                "Successfully fetched auth token",
+                user,
+                "ok"
+            ).toObject()
+            except Exception as e:
+                return {
+                    'error': 'Something went wrong',
+                    'message': str(e)
+                }, 500
+        return ResponseFormat(
+                "Error fetching auth token!",
+                user,
+                "ok"
+            ).toObject()
+    except Exception as e:
+        print(e)
+        return ResponseFormat(
+                "Something went wrong!",
+                None,
+                "bad"
+            ).toObject(), 500
 
 @users_bp.route('/')
 def get_current_user():

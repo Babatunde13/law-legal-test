@@ -2,10 +2,10 @@ from typing import Dict
 from app.utils.response_format import ResponseFormat
 from app.utils import validate
 
-def validate_sign_up_data(data: Dict[str, str]):
-    if not data or not data.get('email') or not data.get('password') or not data.get('name'):
+def validate_sign_in_data(data: Dict[str, str]):
+    if not data or not data.get('email') or not data.get('password'):
         return ResponseFormat(
-            "Name, email and password must be passed",
+            "email and password must be passed",
             None,
             "bad"
         ).toObject(), 400
@@ -21,9 +21,4 @@ def validate_sign_up_data(data: Dict[str, str]):
             None,
             "bad"
         ).toObject(), 400
-    if not ( 2 <= len(data['name'].split(' ')) <= 3):
-        return ResponseFormat(
-            "Invalid name, name must be first and last, and may optionally include middle name",
-            None,
-            "bad"
-        ).toObject(), 400
+    

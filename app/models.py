@@ -49,11 +49,11 @@ class User(db.Model):
             'is_confirmed': self.is_confirmed, 'is_admin': self.is_admin,
         }
 
-products_categories = db.Table(
-    'products_categories',
-    db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True),
-    db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True)
-)
+# products_categories = db.Table(
+#     'products_categories',
+#     db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True),
+#     db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True)
+# )
 
 class Categories(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
@@ -62,11 +62,11 @@ class Categories(db.Model):
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
-        return f"User('{self.email}')"
+        return f"Categories('{self.email}')"
     
     def to_dict(self):
         return {
-            'name': self.name, 'products': self.self.products, '_id': self.id,
+            'name': self.name, '_id': self.id,
             'creator': self.user
         }
 
@@ -75,12 +75,12 @@ class Products(db.Model):
     name = db.Column(db.String(30), index=True)
     quantity = db.Column(db.Integer, default=1)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    categories = db.relationship('Categories', secondary=products_categories, lazy='subquery',
-        backref=db.backref('products', lazy=True))
+    # categories = db.relationship('Categories', secondary=products_categories, lazy='subquery',
+    #     backref=db.backref('products', lazy=True))
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
-        return f"User('{self.name}')"
+        return f"Products('{self.name}')"
     
     def to_dict(self):
         return {
@@ -93,7 +93,7 @@ class Transactions(db.Model):
     name = db.Column(db.String(30), index=True)
     desctiption = db.Column(db.String(30), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
