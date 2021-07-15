@@ -24,7 +24,4 @@ def create_app(config=None):
     from .categories import categories_bp
     app.register_blueprint(categories_bp, url_prefix='/api/v1/categories')
 
-    from .categories import categories_bp
-    app.register_blueprint(categories_bp, url_prefix='/api/v1/products')
-
     return app
