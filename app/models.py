@@ -50,11 +50,11 @@ class User(db.Model):
             'is_confirmed': self.is_confirmed, 'is_admin': self.is_admin,
         }
 
-# products_categories = db.Table(
-#     'products_categories',
-#     db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True),
-#     db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True)
-# )
+products_categories = db.Table(
+    'products_categories',
+    db.Column('product_id', db.Integer, db.ForeignKey('products.id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('categories.id'), primary_key=True)
+)
 
 class Categories(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
@@ -81,8 +81,8 @@ class Products(db.Model):
     quantity = db.Column(db.Integer, default=1)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     active=db.Column(db.Boolean, default=True)
-    # categories = db.relationship('Categories', secondary=products_categories, lazy='subquery',
-    #     backref=db.backref('products', lazy=True))
+    categories = db.relationship('Categories', secondary=products_categories, lazy='subquery',
+        backref=db.backref('products', lazy=True))
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
@@ -93,8 +93,8 @@ class Products(db.Model):
             'name': self.name, 'quantity': self.quantity, '_id': self.id,
             "description": self.description, "image_url": self.image_url,
             "price":self.price,
-            'creator': self.users.to_dict()
-            # , 'categories': self.categories,
+            'creator': self.users.to_dict(), 
+            'categories': self.categories.all(),
         }
 
 class Transactions(db.Model):
@@ -103,6 +103,8 @@ class Transactions(db.Model):
     description = db.Column(db.String(30), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    amount=db.Column(db.Integer)
+    quantity=db.Column(db.Integer)
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''

@@ -81,7 +81,7 @@ def login():
                     'message': str(e)
                 }, 500
         return ResponseFormat(
-                "Error fetching auth token!",
+                "Error fetching auth token!, invalid email or password",
                 user,
                 "ok"
             ).toObject()
