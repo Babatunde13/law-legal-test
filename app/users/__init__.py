@@ -29,6 +29,12 @@ def token_required(f):
                 None,
                 "unauthorized"
             ), 401
+            if not current_user.active:
+                return ResponseFormat(
+                'Invalid user',
+                None,
+                "unauthorized"
+            ), 403
         except Exception as e:
             return ResponseFormat(
                 'Something went wrong',
