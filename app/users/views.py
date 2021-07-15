@@ -1,13 +1,51 @@
+from app.models import User
+from operator import ne
+from app.utils.validate_input.signup import validate_sign_up_data
+from flask import request
 from app.utils.response_format import ResponseFormat
 from . import users_bp
+from app.utils import validate
+from app.utils.db_utils import auth
 
 @users_bp.route('/auth/signup', methods=['POST'])
 def signup():
-    return ResponseFormat(
-        "Successfully created user",
-        {},
-        "ok"
-    ).toObject()
+    try:
+        data = request.get_json()
+        print(data)
+        # validate input
+        if validate_sign_up_data(data):
+            return validate_sign_up_data(data)
+
+        user = User.query.filter_by(email=data['email'])
+        if user:
+            return ResponseFormat(
+                "Email chosen",
+                None,
+                "ok"
+            ).toObject(), 400
+        new_user = auth.signup(
+            data['email'], 
+            data['email'], 
+            data['password']
+        )
+        print(new_user)
+        if new_user:
+            return ResponseFormat(
+                "Successfully created user",
+                new_user,
+                "ok"
+            ).toObject()
+        return ResponseFormat(
+                "Error creating account, try again!",
+                new_user,
+                "ok"
+            ).toObject()
+    except Exception as e:
+        return ResponseFormat(
+                "Something went wrong!",
+                None,
+                "bad"
+            ).toObject(), 500 
 
 @users_bp.route('/auth/login', methods=['POST'])
 def login():
