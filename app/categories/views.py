@@ -6,8 +6,13 @@ from app import db
 
 @categories_bp.route('/', methods=['POST'])
 @token_required
-@admin_required
-def create_categories():
+def create_categories(current_user):
+    if not current_user.active:
+        return ResponseFormat(
+            'Invalid user',
+            None,
+            "unauthorized"
+        ).toObject(), 403
     return ResponseFormat(
         "successfully created new category",
         {},
@@ -41,8 +46,13 @@ def get_category(id):
 
 @categories_bp.route('/<id>', methods=['PUT'])
 @token_required
-@admin_required
-def update_categorie(id):
+def update_categorie(current_user, id):
+    if not current_user.active:
+        return ResponseFormat(
+            'Invalid user',
+            None,
+            "unauthorized"
+        ).toObject(), 403
     category = Categories.query.get(id)
     if not category:
         return ResponseFormat(
@@ -59,8 +69,13 @@ def update_categorie(id):
 
 @categories_bp.route('/<id>', methods=['DELETE'])
 @token_required
-@admin_required
-def delete_categorie(id):
+def delete_categorie(current_user, id):
+    if not current_user.active:
+        return ResponseFormat(
+            'Invalid user',
+            None,
+            "unauthorized"
+        ).toObject(), 403
     category = Categories.query.get(id)
     if not category:
         return ResponseFormat(

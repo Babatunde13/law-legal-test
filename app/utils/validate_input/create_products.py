@@ -3,8 +3,8 @@ from app.utils.response_format import ResponseFormat
 
 def validate_product(data: Dict[str, Union[str,int]]):
     # validate name, description, image_url, price, quantity
-    if not data or not data['name'] or not data['image'] \
-        or not data['description'] or not data['price']:
+    if not data or not data.get('name', None) or not data.get('image', None) \
+        or not data.get('description', None) or not data.get('price', None):
         return ResponseFormat(
             "name, image, description and price must be passed",
             None,

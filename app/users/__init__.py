@@ -49,7 +49,6 @@ def token_required(f):
 
     return decorated
 
-def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None

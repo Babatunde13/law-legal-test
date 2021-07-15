@@ -1,15 +1,20 @@
 from app.utils.validate_input.create_products import validate_product
 from flask import request
 from app.models import Products
-from app.users import token_required, admin_required
+from app.users import token_required
 from app import db
 from . import products_bp
 from app.utils.response_format import ResponseFormat
 
 @products_bp.route('/', methods=['POST'])
 @token_required
-@admin_required
-def create_products(current_user):
+def create_product(current_user):
+    if not current_user.active:
+        return ResponseFormat(
+            'Invalid user',
+            None,
+            "unauthorized"
+        ).toObject(), 403
     data = request.get_json()
     # validate input
     if validate_product(data):
@@ -47,8 +52,13 @@ def get_product(id):
 
 @products_bp.route('/<id>', methods=['PUT'])
 @token_required
-@admin_required
-def update_product(id):
+def update_product(current_user, id):
+    if not current_user.active:
+        return ResponseFormat(
+            'Invalid user',
+            None,
+            "unauthorized"
+        ).toObject(), 403
     product = Products.query.get(id)
     if not product:
         return ResponseFormat(
@@ -64,8 +74,13 @@ def update_product(id):
 
 @products_bp.route('/<id>', methods=['DELETE'])
 @token_required
-@admin_required
-def delete_product(id):
+def delete_product(current_user, id):
+    if not current_user.active:
+        return ResponseFormat(
+            'Invalid user',
+            None,
+            "unauthorized"
+        ).toObject(), 403
     product = Products.query.get(id)
     if not product:
         return ResponseFormat(
