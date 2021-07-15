@@ -1,12 +1,13 @@
-from app.models import User
+from flask import request, current_app as app
+import jwt
 from app.utils.validate_input.signup import validate_sign_up_data
 from app.utils.validate_input.signin import validate_sign_in_data
-from flask import request, current_app as app
 from app.utils.response_format import ResponseFormat
-from . import token_required, users_bp
-from app.utils import validate
 from app.utils.db_utils import auth
-import jwt
+from app.models import User
+from app import db
+from . import token_required, users_bp
+from app import users
 
 @users_bp.route('/auth/signup', methods=['POST'])
 def signup():
@@ -112,10 +113,28 @@ def profile(id: str):
             "ok"
         ).toObject()
 
-@users_bp.route('/<id>', methods=['PUT'])
+@users_bp.route('/', methods=['PUT'])
+@token_required
 def update_profile(id):
+    data = request.get_json()
+    user: User = User.query.get(id)
+    if data['name']:
+        user.name=data['name']
+    db.session.commit()
     return ResponseFormat(
         "Successfully updated user profile",
-        {},
+        user.to_dict(),
+        "ok"
+    ).toObject()
+
+@users_bp.route('/become_admin', methods=['POST'])
+@token_required
+def become_admin(current_user: User):
+    user: User = User.query.get(current_user.to_dict()['_id'])
+    user.is_admin=True
+    db.session.commit()
+    return ResponseFormat(
+        "Successfully updated user profile",
+        user.to_dict(),
         "ok"
     ).toObject()

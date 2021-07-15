@@ -14,33 +14,36 @@ def token_required(f):
         token = None
         if 'Authorization' in request.headers:
             token = request.headers['Authorization'].split(' ')[1]
+        print(token)
         if not token: 
             return ResponseFormat(
                 'You did not provide a token',
                 None,
                 "unauthorized"
-            ), 401
+            ).toObject(), 401
         try:
             data=jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            print(int(data['user_id']))
             current_user=models.User.query.get_or_404(int(data['user_id']))
             if current_user is None:
                 return ResponseFormat(
                 'Invalid token',
                 None,
                 "unauthorized"
-            ), 401
+            ).toObject(), 401
+            print(current_user.active)
             if not current_user.active:
                 return ResponseFormat(
                 'Invalid user',
                 None,
                 "unauthorized"
-            ), 403
+            ).toObject(), 403
         except Exception as e:
             return ResponseFormat(
                 'Something went wrong',
                 None,
                 "bad"
-            ), 500
+            ).toObject(), 500
 
         return f(current_user, *args, **kwargs)
 
@@ -57,7 +60,7 @@ def admin_required(f):
                 'You did not provide a token',
                 None,
                 "unauthorized"
-            ), 401
+            ).toObject(), 401
         try:
             data=jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user: models.User = models.User.query.get_or_404(int(data['user_id']))
@@ -66,19 +69,19 @@ def admin_required(f):
                     'Invalid token',
                     None,
                     "unauthorized"
-                ), 401
+                ).toObject(), 401
             if not current_user.is_admin:
                 return ResponseFormat(
                     'Only admins are allowed to do that!',
                     None,
                     "Forbidden"
-                ), 403
+                ).toObject(), 403
         except Exception as e:
             return ResponseFormat(
                     'Something went wrong',
                     None,
                     "bad"
-                ), 500
+                ).toObject(), 500
 
         return f(current_user, *args, **kwargs)
 
