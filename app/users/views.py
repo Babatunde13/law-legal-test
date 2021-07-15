@@ -1,11 +1,11 @@
 from app.models import User
-from operator import ne
 from app.utils.validate_input.signup import validate_sign_up_data
 from flask import request
 from app.utils.response_format import ResponseFormat
 from . import users_bp
 from app.utils import validate
 from app.utils.db_utils import auth
+from app import db
 
 @users_bp.route('/auth/signup', methods=['POST'])
 def signup():
@@ -16,7 +16,7 @@ def signup():
         if validate_sign_up_data(data):
             return validate_sign_up_data(data)
 
-        user = User.query.filter_by(email=data['email'])
+        user = User.query.filter_by(email=data['email']).first()
         if user:
             return ResponseFormat(
                 "Email chosen",
@@ -28,6 +28,8 @@ def signup():
             data['email'], 
             data['password']
         )
+        db.session.add(new_user)
+        db.session.commit()
         print(new_user)
         if new_user:
             return ResponseFormat(

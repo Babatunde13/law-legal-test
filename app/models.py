@@ -51,14 +51,14 @@ class User(db.Model):
 
 products_categories = db.Table(
     'products_categories',
-    db.Column('product_id', db.Integer, db.ForeignKey('product.id')),
-    db.Column('category_id', db.Integer, db.ForeignKey('category.id'))
+    db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True)
 )
 
 class Categories(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
     name = db.Column(db.String(30), index=True)
-    
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
@@ -74,12 +74,9 @@ class Products(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
     name = db.Column(db.String(30), index=True)
     quantity = db.Column(db.Integer, default=1)
-    products = db.relationship(
-        'Categories',
-        secondary=products_categories,
-        backref=db.backref('products_categories', lazy='dynamic'),
-        lazy='dynamic'
-    )
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    categories = db.relationship('Categories', secondary=products_categories, lazy='subquery',
+        backref=db.backref('products', lazy=True))
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
@@ -95,8 +92,8 @@ class Transactions(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
     name = db.Column(db.String(30), index=True)
     desctiption = db.Column(db.String(30), index=True)
-    user_id = db.Column(db.String(30), index=True)
-    product_id = db.Column(db.String(30), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
 
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
