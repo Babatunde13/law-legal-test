@@ -91,13 +91,16 @@ class Products(db.Model):
     def to_dict(self):
         return {
             'name': self.name, 'quantity': self.quantity, '_id': self.id,
-            'categories': self.categories, 'creeator': self.user
+            "description": self.description, "image_url": self.image_url,
+            "price":self.price,
+            'creator': self.users.to_dict()
+            # , 'categories': self.categories,
         }
 
 class Transactions(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
     name = db.Column(db.String(30), index=True)
-    desctiption = db.Column(db.String(30), index=True)
+    description = db.Column(db.String(30), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
 

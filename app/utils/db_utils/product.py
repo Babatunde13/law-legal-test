@@ -8,10 +8,11 @@ def create_product(product, user, categories=[]):
         quantity=product.get('quantity', 1),
         price=product['price'],
         image_url=product['image_url'],
-        user_id=user._id
+        user_id=user.id
     )
     db.session.add(product)
-    # db.session.commit()
+    db.session.commit()
+    return product
     # for category in categories:
     #     product.categories.append(Categories.query.filter_by(id=category).first())
     # db.session.commit()

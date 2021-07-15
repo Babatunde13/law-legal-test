@@ -22,16 +22,18 @@ def create_categories(current_user):
 @categories_bp.route('/')
 def get_categories():
     categories = Categories.query.filter_by(active=True).all()
-    
+    categories = [
+        category.to_dict() for category in categories
+    ]
     return ResponseFormat(
-        "Successfully retrieved Categories",
+        "Successfully retrieved categories",
         categories,
         "ok"
     ).toObject()
 
 @categories_bp.route('/<id>')
 def get_category(id):
-    category = Categories.query.get(id)
+    category = Categories.query.filter_by(id=id, active=True).first()
     if not category:
         return ResponseFormat(
             "Category Not found",
@@ -40,7 +42,7 @@ def get_category(id):
         ).toObject(), 404
     return ResponseFormat(
         "Successfully retrieved Category",
-        category,
+        category.to_dict(),
         "ok"
     ).toObject()
 
@@ -83,7 +85,7 @@ def delete_categorie(current_user, id):
             None,
             "bad"
         ).toObject(), 404
-    db.session.delete(category)
+    category.active=False
     db.session.commit()
     return ResponseFormat(
         "successfully deleted category",
