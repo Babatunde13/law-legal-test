@@ -16,7 +16,7 @@ def create_products(current_user):
 
 @products_bp.route('/')
 def get_products():
-    products = Products.query.all()
+    products = Products.query.filter_by(active=True).all()
     return ResponseFormat(
         "Successfully retrieved products",
         products,

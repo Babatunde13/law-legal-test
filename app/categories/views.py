@@ -16,7 +16,7 @@ def create_categories():
 
 @categories_bp.route('/')
 def get_categories():
-    categories = Categories.query.all()
+    categories = Categories.query.filter_by(active=True).all()
     
     return ResponseFormat(
         "Successfully retrieved Categories",

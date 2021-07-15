@@ -11,6 +11,7 @@ class User(db.Model):
     password_hash=db.Column(db.String(108))
     is_confirmed=db.Column(db.Boolean, default=False)
     is_admin=db.Column(db.Boolean, default=False)
+    active=db.Column(db.Boolean, default=True)
     payment=db.Column(db.Boolean, default=False)
     created_at=db.Column(db.DateTime, default=datetime.utcnow)
     updated_at=db.Column(db.DateTime, default=datetime.utcnow)
@@ -59,7 +60,8 @@ class Categories(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
     name = db.Column(db.String(30), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
+    active=db.Column(db.Boolean, default=True)
+    
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
         return f"Categories('{self.email}')"
@@ -73,8 +75,12 @@ class Categories(db.Model):
 class Products(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
     name = db.Column(db.String(30), index=True)
+    description=db.Column(db.Text)
+    image_url=db.Column(db.String(120))
+    price=db.Column(db.Integer)
     quantity = db.Column(db.Integer, default=1)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    active=db.Column(db.Boolean, default=True)
     # categories = db.relationship('Categories', secondary=products_categories, lazy='subquery',
     #     backref=db.backref('products', lazy=True))
 
