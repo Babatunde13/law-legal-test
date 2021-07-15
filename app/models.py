@@ -69,7 +69,7 @@ class Categories(db.Model):
     def to_dict(self):
         return {
             'name': self.name, '_id': self.id,
-            'creator': self.user
+            'creator': self.users.to_dict()
         }
 
 class Products(db.Model):

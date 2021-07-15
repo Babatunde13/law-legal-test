@@ -1,5 +1,6 @@
+from flask import request
 from app.models import Categories
-from app.users import token_required, admin_required
+from app.users import token_required
 from app.utils.response_format import ResponseFormat
 from . import categories_bp
 from app import db
@@ -13,9 +14,19 @@ def create_categories(current_user):
             None,
             "unauthorized"
         ).toObject(), 403
+    data = request.get_json()
+    if not data['name']:
+        return ResponseFormat(
+        "Name of category must be passed",
+        None,
+        "ok"
+    ).toObject()
+    category = Categories(name=data['name'], user_id=current_user.id)
+    db.session.add(category)
+    db.session.commit()
     return ResponseFormat(
         "successfully created new category",
-        {},
+        category.to_dict(),
         "ok"
     ).toObject()
 
@@ -48,7 +59,7 @@ def get_category(id):
 
 @categories_bp.route('/<id>', methods=['PUT'])
 @token_required
-def update_categorie(current_user, id):
+def update_category(current_user, id):
     if not current_user.active:
         return ResponseFormat(
             'Invalid user',
@@ -62,16 +73,28 @@ def update_categorie(current_user, id):
             None,
             "bad"
         ).toObject(), 404
-    db.session.commit()
-    return ResponseFormat(
-        "successfully updated category",
-        {},
-        "ok"
-    ).toObject()
+    data = request.get_json()
+    try:
+        if data:
+            category.name = data.get('name', category.name)
+            db.session.commit()
+        return ResponseFormat(
+            "successfully updated category",
+            category.to_dict(),
+            "ok"
+        ).toObject()
+    except Exception as e:
+        print(e)
+        return ResponseFormat(
+            str(e),
+            None,
+            "bad"
+        ).toObject()
+
 
 @categories_bp.route('/<id>', methods=['DELETE'])
 @token_required
-def delete_categorie(current_user, id):
+def delete_category(current_user, id):
     if not current_user.active:
         return ResponseFormat(
             'Invalid user',
@@ -89,6 +112,6 @@ def delete_categorie(current_user, id):
     db.session.commit()
     return ResponseFormat(
         "successfully deleted category",
-        {},
+        None,
         "ok"
     ).toObject()
