@@ -1,7 +1,7 @@
 from app.utils.response_format import ResponseFormat
 from . import users_bp
 
-@users_bp.route('/', methods=['POST'])
+@users_bp.route('/auth/signup', methods=['POST'])
 def signup():
     return ResponseFormat(
         "Successfully created user",
@@ -9,13 +9,21 @@ def signup():
         "ok"
     ).toObject()
 
-@users_bp.route('/')
+@users_bp.route('/auth/login', methods=['POST'])
 def login():
     return ResponseFormat(
         "Successfully fetched auth token",
         {},
         "ok"
     ).toObject()
+
+@users_bp.route('/')
+def get_current_user():
+    return ResponseFormat(
+        "Successfully retrieved user profile",
+        {},
+        "ok"
+    )
 
 @users_bp.route('/<id>')
 def profile(id):
