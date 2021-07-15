@@ -3,7 +3,7 @@ from app.utils.validate_input.signup import validate_sign_up_data
 from app.utils.validate_input.signin import validate_sign_in_data
 from flask import request, current_app as app
 from app.utils.response_format import ResponseFormat
-from . import users_bp
+from . import token_required, users_bp
 from app.utils import validate
 from app.utils.db_utils import auth
 import jwt
@@ -93,12 +93,14 @@ def login():
             ).toObject(), 500
 
 @users_bp.route('/')
-def get_current_user():
+@token_required
+def get_current_user(current_user: User):
+    print(current_user.to_dict())
     return ResponseFormat(
         "Successfully retrieved user profile",
-        {},
+        current_user.to_dict(),
         "ok"
-    )
+    ).toObject()
 
 @users_bp.route('/<id>')
 def profile(id):
