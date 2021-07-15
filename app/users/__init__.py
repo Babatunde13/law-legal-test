@@ -1,3 +1,4 @@
+from app.utils.response_format import ResponseFormat
 import jwt
 from flask import Blueprint, request, current_app, jsonify
 from app import models
@@ -14,23 +15,26 @@ def token_required(f):
         if 'Authorization' in request.headers:
             token = request.headers['Authorization'].split(' ')[1]
         if not token: 
-            return jsonify({
-                'error': 'Unauthorized',
-                'message': 'You did not provide a token'
-                }), 401
+            return ResponseFormat(
+                'You did not provide a token',
+                None,
+                "unauthorized"
+            ), 401
         try:
             data=jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user=models.User.query.get_or_404(int(data['user_id']))
             if current_user is None:
-                return jsonify({
-                    'error': 'Unauthorized',
-                    'message': 'Invalid token'
-                }), 401
+                return ResponseFormat(
+                'Invalid token',
+                None,
+                "unauthorized"
+            ), 401
         except Exception as e:
-            return jsonify({
-                'error': 'Something went wrong',
-                'message': str(e)
-                }), 500
+            return ResponseFormat(
+                'Something went wrong',
+                None,
+                "bad"
+            ), 500
 
         return f(current_user, *args, **kwargs)
 

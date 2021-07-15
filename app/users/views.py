@@ -103,12 +103,14 @@ def get_current_user(current_user: User):
     ).toObject()
 
 @users_bp.route('/<id>')
-def profile(id):
-    return ResponseFormat(
-        "Successfully retrieved user profile",
-        {},
-        "ok"
-    ).toObject()
+def profile(id: str):
+    user: User = User.query.get(id)
+    if user:
+        return ResponseFormat(
+            "Successfully retrieved user profile",
+            user.to_dict(),
+            "ok"
+        ).toObject()
 
 @users_bp.route('/<id>', methods=['PUT'])
 def update_profile(id):
