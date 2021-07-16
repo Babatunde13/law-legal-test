@@ -21,14 +21,21 @@ def create_categories(current_user):
         None,
         "ok"
     ).toObject()
-    category = Categories(name=data['name'], user_id=current_user.id)
-    db.session.add(category)
-    db.session.commit()
-    return ResponseFormat(
-        "successfully created new category",
-        category.to_dict(),
-        "ok"
-    ).toObject()
+    try:
+        category = Categories(name=data['name'], user_id=current_user.id)
+        db.session.add(category)
+        db.session.commit()
+        return ResponseFormat(
+            "successfully created new category",
+            category.to_dict(),
+            "ok"
+        ).toObject(), 201
+    except Exception as e:
+        return ResponseFormat(
+            str(e),
+            None,
+            "bad"
+        ).toObject(), 400
 
 @categories_bp.route('/')
 def get_categories():

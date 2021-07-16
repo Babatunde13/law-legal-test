@@ -36,7 +36,7 @@ def signup():
                 "Successfully created user",
                 new_user,
                 "ok"
-            ).toObject()
+            ).toObject(), 201
         return ResponseFormat(
                 "Error creating account, try again!",
                 new_user,
@@ -84,7 +84,7 @@ def login():
                 "Error fetching auth token!, invalid email or password",
                 user,
                 "ok"
-            ).toObject()
+            ).toObject(), 400
     except Exception as e:
         print(e)
         return ResponseFormat(
@@ -96,7 +96,6 @@ def login():
 @users_bp.route('/')
 @token_required
 def get_current_user(current_user: User):
-    print(current_user.to_dict())
     return ResponseFormat(
         "Successfully retrieved user profile",
         current_user.to_dict(),
@@ -112,12 +111,17 @@ def profile(id: str):
             user.to_dict(),
             "ok"
         ).toObject()
+    return ResponseFormat(
+            "User not found",
+            None,
+            "bad"
+        ).toObject(), 404
 
 @users_bp.route('/', methods=['PUT'])
 @token_required
-def update_profile(id):
+def update_profile(current_user):
     data = request.get_json()
-    user: User = User.query.get(id)
+    user: User = User.query.get(current_user.id)
     if data['name']:
         user.name=data['name']
     db.session.commit()
