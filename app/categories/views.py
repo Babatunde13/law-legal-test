@@ -116,6 +116,7 @@ def delete_category(current_user, id):
             "bad"
         ).toObject(), 404
     category.active=False
+    db.session.delete(category)
     db.session.commit()
     return ResponseFormat(
         "successfully deleted category",
