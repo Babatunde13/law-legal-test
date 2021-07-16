@@ -28,7 +28,7 @@ def create_app(config=None):
     def docs():
         return redirect('https://documenter.getpostman.com/view/11853513/TzmBEuBu')
 
-    @app.route('/upload_image', methods=['POST'])
+    @app.route('/api/v1/upload_image', methods=['POST'])
     def upload_image():
         data = request.files
         print(data)
