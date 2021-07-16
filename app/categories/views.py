@@ -32,7 +32,7 @@ def create_categories(current_user):
         ).toObject(), 201
     except Exception as e:
         return ResponseFormat(
-            str(e),
+            "Error creating `category` could be that the category exist before",
             None,
             "bad"
         ).toObject(), 400
