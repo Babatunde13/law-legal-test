@@ -1,4 +1,6 @@
 from typing import Dict, Union
+
+from flask import request
 from app.utils.response_format import ResponseFormat
 
 def validate_product(data: Dict[str, Union[str,int]]):
@@ -7,6 +9,12 @@ def validate_product(data: Dict[str, Union[str,int]]):
         or not data.get('description', None) or not data.get('price', None):
         return ResponseFormat(
             "name, image, description and price must be passed",
+            None,
+            "bad"
+        ).toObject(), 400
+    if not data['image'].startswith(request.host_url+'static/img'):
+        return ResponseFormat(
+            "Invalid image url",
             None,
             "bad"
         ).toObject(), 400
