@@ -8,7 +8,7 @@ from app import db
 @categories_bp.route('/', methods=['POST'])
 @token_required
 def create_categories(current_user):
-    if not current_user.active:
+    if not current_user.is_admin:
         return ResponseFormat(
             'Invalid user',
             None,
@@ -67,7 +67,7 @@ def get_category(id):
 @categories_bp.route('/<id>', methods=['PUT'])
 @token_required
 def update_category(current_user, id):
-    if not current_user.active:
+    if not current_user.is_admin:
         return ResponseFormat(
             'Invalid user',
             None,
@@ -102,7 +102,7 @@ def update_category(current_user, id):
 @categories_bp.route('/<id>', methods=['DELETE'])
 @token_required
 def delete_category(current_user, id):
-    if not current_user.active:
+    if not current_user.is_admin:
         return ResponseFormat(
             'Invalid user',
             None,
