@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import jwt
 from werkzeug.utils import redirect
+from app.utils.response_format import ResponseFormat
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -26,5 +27,47 @@ def create_app(config=None):
     @app.route('/')
     def docs():
         return redirect('https://documenter.getpostman.com/view/11853513/TzmBEuBu')
+
+    @app.route('/upload_image', methods=['POST'])
+    def upload_image():
+        data = request.files
+        print(data)
+        return ResponseFormat(
+            "successfully uploaded image",
+            None,
+            "ok"
+        ), 201
+
+    @app.errorhandler(403)
+    def forbidden(error):
+        return ResponseFormat(
+            'Invalid user',
+            None,
+            "forbidden"
+        ), 403
+
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return ResponseFormat(
+            'Resource not found',
+            None,
+            "not found"
+        ), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        return ResponseFormat(
+            'SOmethign went wrong',
+            None,
+            "bad"
+        ), 500
+
+    @app.errorhandler(405)
+    def method_not_found(error):
+        return ResponseFormat(
+            'That HTTP verb isn\'t allowed for that request',
+            None,
+            "bad"
+        ), 405
 
     return app
