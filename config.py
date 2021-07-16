@@ -3,8 +3,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+db=os.getenv('DATABASE_URL')
+if db.startswith('postgres://'):
+    db.replace("postgres://", "postgresql://", 1)
 class Config:
-    SQLALCHEMY_DATABASE_URI=os.getenv('DATABASE_URL') or 'sqlite:///app.db'
+    SQLALCHEMY_DATABASE_URI=db
     SECRET_KEY=os.getenv('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS=True
     
