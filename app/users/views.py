@@ -13,7 +13,6 @@ from app import users
 def signup():
     try:
         data = request.get_json()
-        print(data)
         # validate input
         if validate_sign_up_data(data):
             return validate_sign_up_data(data)
@@ -30,7 +29,6 @@ def signup():
             data['email'], 
             data['password']
         )
-        print(new_user)
         if new_user:
             return ResponseFormat(
                 "Successfully created user",
@@ -43,7 +41,6 @@ def signup():
                 "ok"
             ).toObject()
     except Exception as e:
-        print(e)
         return ResponseFormat(
                 "Something went wrong!",
                 None,
@@ -54,7 +51,6 @@ def signup():
 def login():
     try:
         data = request.get_json()
-        print(data)
         # validate input
         if validate_sign_in_data(data):
             return validate_sign_in_data(data)
@@ -65,7 +61,6 @@ def login():
         )
         if user:
             try:
-                print(user)
                 user['token'] = jwt.encode(
                     {'user_id': str(user['_id'])},
                     app.config['SECRET_KEY']
@@ -86,7 +81,6 @@ def login():
                 "ok"
             ).toObject(), 400
     except Exception as e:
-        print(e)
         return ResponseFormat(
                 "Something went wrong!",
                 None,

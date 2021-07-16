@@ -67,7 +67,6 @@ class Categories(db.Model):
         return f"Categories('{self.name}')"
     
     def to_dict(self):
-        print(self.products)
         return {
             'name': self.name, '_id': self.id,
             'creator': self.users.to_dict(),
@@ -100,7 +99,6 @@ class Products(db.Model):
         return f"Products('{self.name}')"
     
     def to_dict(self):
-        print(self.categories)
         return {
             'name': self.name, 'quantity': self.quantity, '_id': self.id,
             "description": self.description, "image_url": self.image_url,

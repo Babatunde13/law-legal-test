@@ -22,7 +22,6 @@ def create_product(current_user):
         return validate_product(data)
     # upload image to an image server and store the url
     data['image_url']=data['image']
-    print(data['category_ids'])
     # create product
     new_product=product.create_product(data, current_user, categories=data['category_ids'])
     if new_product:
@@ -43,7 +42,6 @@ def get_products():
     products = [
         product.to_dict() for product in products
     ]
-    print(products)
     return ResponseFormat(
         "Successfully retrieved products",
         products,

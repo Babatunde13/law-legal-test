@@ -91,7 +91,6 @@ def update_category(current_user, id):
             "ok"
         ).toObject()
     except Exception as e:
-        print(e)
         return ResponseFormat(
             str(e),
             None,
