@@ -36,7 +36,7 @@ def create_app(config=None):
             "successfully uploaded image",
             None,
             "ok"
-        ), 201
+        ).toObject(), 201
 
     @app.errorhandler(403)
     def forbidden(error):
@@ -44,7 +44,7 @@ def create_app(config=None):
             'Invalid user',
             None,
             "forbidden"
-        ), 403
+        ).toObject(), 403
 
     @app.errorhandler(404)
     def page_not_found(error):
@@ -60,7 +60,7 @@ def create_app(config=None):
             'SOmethign went wrong',
             None,
             "bad"
-        ), 500
+        ).toObject(), 500
 
     @app.errorhandler(405)
     def method_not_found(error):
@@ -68,6 +68,6 @@ def create_app(config=None):
             'That HTTP verb isn\'t allowed for that request',
             None,
             "bad"
-        ), 405
+        ).toObject(), 405
 
     return app
