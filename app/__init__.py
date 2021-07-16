@@ -41,7 +41,7 @@ def create_app(config=None):
     @app.errorhandler(403)
     def forbidden(error):
         return ResponseFormat(
-            'Invalid user',
+            'Only admins are allowed to do that!',
             None,
             "forbidden"
         ).toObject(), 403
@@ -52,12 +52,12 @@ def create_app(config=None):
             'Resource not found',
             None,
             "not found"
-        ), 404
+        ).toObject(), 404
 
     @app.errorhandler(500)
     def internal_server_error(error):
         return ResponseFormat(
-            'SOmethign went wrong',
+            'Somethign went wrong',
             None,
             "bad"
         ).toObject(), 500

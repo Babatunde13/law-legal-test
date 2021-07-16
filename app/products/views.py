@@ -1,3 +1,4 @@
+from os import abort
 from flask import request
 from app.utils.validate_input.create_products import validate_product
 from app.utils.response_format import ResponseFormat
@@ -11,11 +12,7 @@ from . import products_bp
 @token_required
 def create_product(current_user):
     if not current_user.is_admin:
-        return ResponseFormat(
-            'Invalid user',
-            None,
-            "unauthorized"
-        ).toObject(), 403
+        abort(403)
     data = request.get_json()
     # validate input
     if validate_product(data):
@@ -67,11 +64,7 @@ def get_product(id):
 @token_required
 def update_product(current_user, id):
     if not current_user.is_admin:
-        return ResponseFormat(
-            'Invalid user',
-            None,
-            "unauthorized"
-        ).toObject(), 403
+        abort(403)
     product = Products.query.get(id)
     if not product:
         return ResponseFormat(
@@ -89,11 +82,7 @@ def update_product(current_user, id):
 @token_required
 def delete_product(current_user, id):
     if not current_user.is_admin:
-        return ResponseFormat(
-            'Invalid user',
-            None,
-            "unauthorized"
-        ).toObject(), 403
+        abort(403)
     product = Products.query.get(id)
     if not product:
         return ResponseFormat(

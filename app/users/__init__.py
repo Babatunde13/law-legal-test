@@ -1,3 +1,4 @@
+from os import abort
 from app.utils.response_format import ResponseFormat
 import jwt
 from flask import Blueprint, request, current_app, jsonify
@@ -30,11 +31,7 @@ def token_required(f):
                 "unauthorized"
             ).toObject(), 401
             if not current_user.active:
-                return ResponseFormat(
-                'Invalid user',
-                None,
-                "unauthorized"
-            ).toObject(), 403
+                abort(403)
         except Exception as e:
             return ResponseFormat(
                 'Something went wrong',
@@ -68,11 +65,7 @@ def admin_required(f):
                     "unauthorized"
                 ).toObject(), 401
             if not current_user.is_admin:
-                return ResponseFormat(
-                    'Only admins are allowed to do that!',
-                    None,
-                    "Forbidden"
-                ).toObject(), 403
+                abort(403)
         except Exception as e:
             return ResponseFormat(
                     'Something went wrong',

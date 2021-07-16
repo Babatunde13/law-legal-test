@@ -1,3 +1,4 @@
+from os import abort
 from flask import request
 from app.models import Categories
 from app.users import token_required
@@ -9,11 +10,7 @@ from app import db
 @token_required
 def create_categories(current_user):
     if not current_user.is_admin:
-        return ResponseFormat(
-            'Invalid user',
-            None,
-            "unauthorized"
-        ).toObject(), 403
+        abort(403)
     data = request.get_json()
     if not data['name']:
         return ResponseFormat(
@@ -68,11 +65,7 @@ def get_category(id):
 @token_required
 def update_category(current_user, id):
     if not current_user.is_admin:
-        return ResponseFormat(
-            'Invalid user',
-            None,
-            "unauthorized"
-        ).toObject(), 403
+        abort(403)
     category = Categories.query.get(id)
     if not category:
         return ResponseFormat(
@@ -102,11 +95,7 @@ def update_category(current_user, id):
 @token_required
 def delete_category(current_user, id):
     if not current_user.is_admin:
-        return ResponseFormat(
-            'Invalid user',
-            None,
-            "unauthorized"
-        ).toObject(), 403
+        abort(403)
     category = Categories.query.get(id)
     if not category:
         return ResponseFormat(
