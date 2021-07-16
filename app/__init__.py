@@ -7,8 +7,6 @@ from werkzeug.utils import redirect
 db = SQLAlchemy()
 migrate = Migrate()
 
-from app import models
-
 def create_app(config=None):
     app = Flask(__name__)
     if config:
