@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import jwt
+from werkzeug.utils import redirect
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -23,5 +24,9 @@ def create_app(config=None):
 
     from .categories import categories_bp
     app.register_blueprint(categories_bp, url_prefix='/api/v1/categories')
+
+    @app.route('/')
+    def docs():
+        return redirect('https://documenter.getpostman.com/view/11853513/TzmBEuBu')
 
     return app
