@@ -10,9 +10,17 @@ def validate_product(data: Dict[str, Union[str,int]]):
             None,
             "bad"
         ).toObject(), 400
-    if type(data['price']) != int  or data['price'] < 1:
+    try:
+        data['price'] = int(data['price'])
+        if data['price'] < 1:
+            return ResponseFormat(
+                "Price must be an integer and should be greater than #1",
+                None,
+                "bad"
+            ).toObject(), 400
+    except:
         return ResponseFormat(
-            "Price must be an integer and should be greater than #1",
-            None,
-            "bad"
-        ).toObject(), 400
+                "Price must be an integer and should be greater than #1",
+                None,
+                "bad"
+            ).toObject(), 400

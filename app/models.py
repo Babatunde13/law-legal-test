@@ -58,18 +58,29 @@ products_categories = db.Table(
 
 class Categories(db.Model):
     id=db.Column(db.Integer, primary_key=True, index=True)
-    name = db.Column(db.String(30), index=True)
+    name = db.Column(db.String(30), unique=True, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     active=db.Column(db.Boolean, default=True)
     
     def __repr__(self):
         '''This functions describes how the user model will be displayed'''
-        return f"Categories('{self.email}')"
+        return f"Categories('{self.name}')"
     
     def to_dict(self):
+        print(self.products)
         return {
             'name': self.name, '_id': self.id,
-            'creator': self.users.to_dict()
+            'creator': self.users.to_dict(),
+            'products': [
+                Product.private_to_dict() for Product in self.products]
+        }
+    def private_to_dict(self):
+        return {
+            'name': self.name,
+            'id': self.id,
+            'creator': {
+                'email': self.users.email
+            }
         }
 
 class Products(db.Model):
@@ -89,12 +100,26 @@ class Products(db.Model):
         return f"Products('{self.name}')"
     
     def to_dict(self):
+        print(self.categories)
         return {
             'name': self.name, 'quantity': self.quantity, '_id': self.id,
             "description": self.description, "image_url": self.image_url,
             "price":self.price,
             'creator': self.users.to_dict(), 
-            'categories': self.categories.all(),
+            'categories': [
+                category.private_to_dict() for category in self.categories]
+        }
+    def private_to_dict(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'quantity': self.quantity,
+            'image_url': self.image_url,
+            'price': self.price,
+            'id': self.id,
+            'creator': {
+                'email': self.users.email
+            }
         }
 
 class Transactions(db.Model):
@@ -113,6 +138,6 @@ class Transactions(db.Model):
     def to_dict(self):
         return {
             'name': self.name, 'description': self.description, '_id': self.id,
-            'user': self.user, 'product': self.product
+            'user': self.user, 'products': self.products
         }
     

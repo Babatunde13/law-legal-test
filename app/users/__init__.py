@@ -23,7 +23,6 @@ def token_required(f):
             ).toObject(), 401
         try:
             data=jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            print(int(data['user_id']))
             current_user=models.User.query.get_or_404(int(data['user_id']))
             if current_user is None:
                 return ResponseFormat(
@@ -31,7 +30,6 @@ def token_required(f):
                 None,
                 "unauthorized"
             ).toObject(), 401
-            print(current_user.active)
             if not current_user.active:
                 return ResponseFormat(
                 'Invalid user',

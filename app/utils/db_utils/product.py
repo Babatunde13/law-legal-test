@@ -12,8 +12,17 @@ def create_product(product, user, categories=[]):
     )
     db.session.add(product)
     db.session.commit()
+    try:
+        for category_id in categories:
+            print(type(category_id))
+            category = Categories.query.get(int(category_id))
+            if category:
+                product.categories.append(category)
+            else:
+                return None
+        db.session.commit()
+        print(product.categories)
+    except:
+        return None
     return product
-    # for category in categories:
-    #     product.categories.append(Categories.query.filter_by(id=category).first())
-    # db.session.commit()
     

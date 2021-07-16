@@ -22,13 +22,20 @@ def create_product(current_user):
         return validate_product(data)
     # upload image to an image server and store the url
     data['image_url']=data['image']
+    print(data['category_ids'])
     # create product
-    new_product=product.create_product(data, current_user)
+    new_product=product.create_product(data, current_user, categories=data['category_ids'])
+    if new_product:
+        return ResponseFormat(
+            "Successfully create product",
+            new_product.to_dict(),
+            "ok"
+        ).toObject(), 201
     return ResponseFormat(
-        "Successfully create product",
-        new_product.to_dict(),
-        "ok"
-    ).toObject()
+            "Error creating product, did you pass a valid category id?",
+            data['category_ids'],
+            "bad"
+        ).toObject(), 400
 
 @products_bp.route('/')
 def get_products():
