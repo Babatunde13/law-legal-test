@@ -39,7 +39,7 @@ def create_categories(current_user):
 
 @categories_bp.route('/')
 def get_categories():
-    categories = Categories.query.filter_by(active=True).all()
+    categories = Categories.query.filter_by().all()
     categories = [
         category.to_dict() for category in categories
     ]
@@ -51,7 +51,7 @@ def get_categories():
 
 @categories_bp.route('/<id>')
 def get_category(id):
-    category = Categories.query.filter_by(id=id, active=True).first()
+    category = Categories.query.filter_by(id=id).first()
     if not category:
         return ResponseFormat(
             "Category Not found",
